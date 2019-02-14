@@ -1,6 +1,6 @@
 // +build darwin
 
-package xid
+package fuid
 
 import "syscall"
 

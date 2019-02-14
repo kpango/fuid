@@ -18,7 +18,7 @@ import (
 
 type FUID struct {
 	machineID []byte
-	t         fastime.Fastime
+	t         *fastime.Fastime
 }
 
 const (
@@ -78,16 +78,16 @@ func String() string {
 func (f *FUID) String() string {
 	var id [rawLen]byte
 	binary.BigEndian.PutUint32(id[:], uint32(f.t.UnixNanoNow()))
-	id[4] = machineID[0]
-	id[5] = machineID[1]
-	id[6] = machineID[2]
+	id[4] = f.machineID[0]
+	id[5] = f.machineID[1]
+	id[6] = f.machineID[2]
 	id[7] = byte(pid >> 8)
 	id[8] = byte(pid)
 	i := atomic.AddUint32(&objectIDCounter, 1)
 	id[9] = byte(i >> 16)
 	id[10] = byte(i >> 8)
 	id[11] = byte(i)
-	des := make([]byte, encodedLen)
+	dst := make([]byte, encodedLen)
 	dst[0] = encoding[id[0]>>3]
 	dst[1] = encoding[(id[1]>>6)&0x1F|(id[0]<<2)&0x1F]
 	dst[2] = encoding[(id[1]>>1)&0x1F]

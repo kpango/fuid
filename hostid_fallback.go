@@ -1,6 +1,6 @@
 // +build !darwin,!linux,!freebsd,!windows
 
-package xid
+package fuid
 
 import "errors"
 
