@@ -18,8 +18,10 @@ import (
 )
 
 type FUID struct {
-	machineID []byte
-	t         *fastime.Fastime
+	m1 byte
+	m2 byte
+	m3 byte
+	t  *fastime.Fastime
 }
 
 const (
@@ -40,6 +42,9 @@ var (
 		return p
 	}()
 
+	p1 = byte(pid >> 8)
+	p2 = byte(pid)
+
 	objectIDCounter = func() uint32 {
 		b := make([]byte, 3)
 		if _, err := rand.Reader.Read(b); err != nil {
@@ -56,25 +61,28 @@ var (
 )
 
 func New() *FUID {
+	machineID := func() []byte {
+		id := make([]byte, 3)
+		hid, err := readPlatformMachineID()
+		if err != nil || len(hid) == 0 {
+			hid, err = os.Hostname()
+		}
+		if err == nil && len(hid) != 0 {
+			hw := md5.New()
+			hw.Write([]byte(hid))
+			copy(id, hw.Sum(nil))
+		} else {
+			if _, randErr := rand.Reader.Read(id); randErr != nil {
+				panic(fmt.Errorf("fuid: cannot get hostname nor generate a random number: %v; %v", err, randErr))
+			}
+		}
+		return id
+	}()
 	return &FUID{
-		t: fastime.New().StartTimerD(context.Background(), time.Nanosecond*10),
-		machineID: func() []byte {
-			id := make([]byte, 3)
-			hid, err := readPlatformMachineID()
-			if err != nil || len(hid) == 0 {
-				hid, err = os.Hostname()
-			}
-			if err == nil && len(hid) != 0 {
-				hw := md5.New()
-				hw.Write([]byte(hid))
-				copy(id, hw.Sum(nil))
-			} else {
-				if _, randErr := rand.Reader.Read(id); randErr != nil {
-					panic(fmt.Errorf("xid: cannot get hostname nor generate a random number: %v; %v", err, randErr))
-				}
-			}
-			return id
-		}(),
+		t:  fastime.New().StartTimerD(context.Background(), time.Nanosecond*10),
+		m1: machineID[0],
+		m2: machineID[1],
+		m3: machineID[2],
 	}
 }
 
@@ -85,11 +93,11 @@ func String() string {
 func (f *FUID) String() string {
 	var id [rawLen]byte
 	binary.BigEndian.PutUint32(id[:], uint32(f.t.UnixNanoNow()))
-	id[4] = f.machineID[0]
-	id[5] = f.machineID[1]
-	id[6] = f.machineID[2]
-	id[7] = byte(pid >> 8)
-	id[8] = byte(pid)
+	id[4] = f.m1
+	id[5] = f.m2
+	id[6] = f.m3
+	id[7] = p1
+	id[8] = p2
 	i := atomic.AddUint32(&objectIDCounter, 1)
 	id[9] = byte(i >> 16)
 	id[10] = byte(i >> 8)
