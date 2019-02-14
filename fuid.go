@@ -9,6 +9,7 @@ import (
 	"hash/crc32"
 	"io/ioutil"
 	"os"
+	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
@@ -46,6 +47,12 @@ var (
 		}
 		return uint32(b[0])<<16 | uint32(b[1])<<8 | uint32(b[2])
 	}()
+
+	buf = sync.Pool{
+		New: func() interface{} {
+			return make([]byte, encodedLen)
+		},
+	}
 )
 
 func New() *FUID {
@@ -87,7 +94,7 @@ func (f *FUID) String() string {
 	id[9] = byte(i >> 16)
 	id[10] = byte(i >> 8)
 	id[11] = byte(i)
-	dst := make([]byte, encodedLen)
+	dst := buf.Get().([]byte)
 	dst[0] = encoding[id[0]>>3]
 	dst[1] = encoding[(id[1]>>6)&0x1F|(id[0]<<2)&0x1F]
 	dst[2] = encoding[(id[1]>>1)&0x1F]
@@ -108,5 +115,6 @@ func (f *FUID) String() string {
 	dst[17] = encoding[(id[11]>>6)&0x1F|(id[10]<<2)&0x1F]
 	dst[18] = encoding[(id[11]>>1)&0x1F]
 	dst[19] = encoding[(id[11]<<4)&0x1F]
+	buf.Put(dst)
 	return *(*string)(unsafe.Pointer(&dst))
 }
