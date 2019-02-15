@@ -20,31 +20,31 @@ go get github.com/kpango/fuid
 fuid vs rs/xid vs satori/go.uuid vs google/uuid
 ```lstv
 go test -count=5 -run=NONE -bench . -benchmem
-goos: linux
+goos: darwin
 goarch: amd64
 pkg: github.com/kpango/fuid
-BenchmarkFUID-8         	30000000	        41.4 ns/op	      32 B/op	       1 allocs/op
-BenchmarkFUID-8         	30000000	        41.2 ns/op	      32 B/op	       1 allocs/op
-BenchmarkFUID-8         	50000000	        39.8 ns/op	      32 B/op	       1 allocs/op
-BenchmarkFUID-8         	50000000	        40.7 ns/op	      32 B/op	       1 allocs/op
-BenchmarkFUID-8         	30000000	        49.4 ns/op	      32 B/op	       1 allocs/op
-BenchmarkXID-8          	20000000	        57.8 ns/op	      32 B/op	       1 allocs/op
-BenchmarkXID-8          	30000000	        62.3 ns/op	      32 B/op	       1 allocs/op
-BenchmarkXID-8          	20000000	        58.8 ns/op	      32 B/op	       1 allocs/op
-BenchmarkXID-8          	20000000	        60.2 ns/op	      32 B/op	       1 allocs/op
-BenchmarkXID-8          	30000000	        59.5 ns/op	      32 B/op	       1 allocs/op
-BenchmarkSatoriUUID-8   	 3000000	       486 ns/op	      16 B/op	       1 allocs/op
-BenchmarkSatoriUUID-8   	 3000000	       490 ns/op	      16 B/op	       1 allocs/op
-BenchmarkSatoriUUID-8   	 3000000	       502 ns/op	      16 B/op	       1 allocs/op
-BenchmarkSatoriUUID-8   	 3000000	       492 ns/op	      16 B/op	       1 allocs/op
-BenchmarkSatoriUUID-8   	 3000000	       501 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGoogleUUID-8   	 3000000	       499 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGoogleUUID-8   	 3000000	       491 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGoogleUUID-8   	 3000000	       491 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGoogleUUID-8   	 3000000	       485 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGoogleUUID-8   	 3000000	       485 ns/op	      16 B/op	       1 allocs/op
+BenchmarkFUID-8         	50000000	        34.5 ns/op	      32 B/op	       1 allocs/op
+BenchmarkFUID-8         	50000000	        35.6 ns/op	      32 B/op	       1 allocs/op
+BenchmarkFUID-8         	50000000	        35.0 ns/op	      32 B/op	       1 allocs/op
+BenchmarkFUID-8         	50000000	        37.2 ns/op	      32 B/op	       1 allocs/op
+BenchmarkFUID-8         	50000000	        36.8 ns/op	      32 B/op	       1 allocs/op
+BenchmarkXID-8          	30000000	        50.4 ns/op	      32 B/op	       1 allocs/op
+BenchmarkXID-8          	30000000	        51.9 ns/op	      32 B/op	       1 allocs/op
+BenchmarkXID-8          	30000000	        53.4 ns/op	      32 B/op	       1 allocs/op
+BenchmarkXID-8          	30000000	        49.0 ns/op	      32 B/op	       1 allocs/op
+BenchmarkXID-8          	30000000	        49.4 ns/op	      32 B/op	       1 allocs/op
+BenchmarkSatoriUUID-8   	 3000000	       609 ns/op	      20 B/op	       1 allocs/op
+BenchmarkSatoriUUID-8   	 3000000	       594 ns/op	      19 B/op	       1 allocs/op
+BenchmarkSatoriUUID-8   	 2000000	       574 ns/op	      20 B/op	       1 allocs/op
+BenchmarkSatoriUUID-8   	 3000000	       593 ns/op	      20 B/op	       1 allocs/op
+BenchmarkSatoriUUID-8   	 2000000	       613 ns/op	      20 B/op	       1 allocs/op
+BenchmarkGoogleUUID-8   	 3000000	       561 ns/op	      20 B/op	       1 allocs/op
+BenchmarkGoogleUUID-8   	 3000000	       588 ns/op	      19 B/op	       1 allocs/op
+BenchmarkGoogleUUID-8   	 3000000	       590 ns/op	      19 B/op	       1 allocs/op
+BenchmarkGoogleUUID-8   	 2000000	       590 ns/op	      19 B/op	       1 allocs/op
+BenchmarkGoogleUUID-8   	 3000000	       575 ns/op	      19 B/op	       1 allocs/op
 PASS
-ok  	github.com/kpango/fuid	37.002s
+ok  	github.com/kpango/fuid	39.718s
 ```
 
 ## Contribution

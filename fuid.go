@@ -25,8 +25,8 @@ type FUID struct {
 }
 
 const (
-	encodedLen = 20 // string encoded len
-	rawLen     = 12 // binary raw len
+	encodedLen = 20
+	rawLen     = 12
 	encoding   = "0123456789abcdefghijklmnopqrstuv"
 )
 
