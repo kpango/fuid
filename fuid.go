@@ -9,7 +9,6 @@ import (
 	"hash/crc32"
 	"io/ioutil"
 	"os"
-	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
@@ -18,15 +17,22 @@ import (
 )
 
 type FUID struct {
-	m1 byte
-	m2 byte
-	m3 byte
+	s1 []byte
+	c1 byte
+	c2 byte
+	c3 byte
+	c4 byte
+	c5 byte
+	c6 byte
+	c7 byte
+	c8 byte
+	c9 byte
 	t  *fastime.Fastime
 }
 
 const (
 	encodedLen = 20
-	rawLen     = 12
+	rawLen     = 7
 	encoding   = "0123456789abcdefghijklmnopqrstuv"
 )
 
@@ -52,12 +58,6 @@ var (
 		}
 		return uint32(b[0])<<16 | uint32(b[1])<<8 | uint32(b[2])
 	}()
-
-	buf = sync.Pool{
-		New: func() interface{} {
-			return make([]byte, encodedLen)
-		},
-	}
 )
 
 func New() *FUID {
@@ -80,9 +80,15 @@ func New() *FUID {
 	}()
 	return &FUID{
 		t:  fastime.New().StartTimerD(context.Background(), time.Nanosecond*10),
-		m1: machineID[0],
-		m2: machineID[1],
-		m3: machineID[2],
+		c1: machineID[0] >> 5,
+		c2: encoding[machineID[0]&0x1F],
+		c3: encoding[machineID[1]>>3],
+		c4: encoding[(machineID[2]>>6)&0x1F|(machineID[1]<<2)&0x1F],
+		c5: encoding[(machineID[2]>>1)&0x1F],
+		c6: encoding[(p1>>4)&0x1F|(machineID[2]<<4)&0x1F],
+		c7: encoding[p2>>7|(p1<<1)&0x1F],
+		c8: encoding[(p2>>2)&0x1F],
+		c9: (p2 << 3) & 0x1F,
 	}
 }
 
@@ -93,16 +99,11 @@ func String() string {
 func (f *FUID) String() string {
 	var id [rawLen]byte
 	binary.BigEndian.PutUint32(id[:], f.t.UnixUNow())
-	id[4] = f.m1
-	id[5] = f.m2
-	id[6] = f.m3
-	id[7] = p1
-	id[8] = p2
 	i := atomic.AddUint32(&objectIDCounter, 1)
-	id[9] = byte(i >> 16)
-	id[10] = byte(i >> 8)
-	id[11] = byte(i)
-	dst := buf.Get().([]byte)
+	id[4] = byte(i >> 16)
+	id[5] = byte(i >> 8)
+	id[6] = byte(i)
+	dst := make([]byte, 0, encodedLen)
 	dst = append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(append(
 		dst, encoding[id[0]>>3]),
 		encoding[(id[1]>>6)&0x1F|(id[0]<<2)&0x1F]),
@@ -110,20 +111,19 @@ func (f *FUID) String() string {
 		encoding[(id[2]>>4)&0x1F|(id[1]<<4)&0x1F]),
 		encoding[id[3]>>7|(id[2]<<1)&0x1F]),
 		encoding[(id[3]>>2)&0x1F]),
-		encoding[id[4]>>5|(id[3]<<3)&0x1F]),
+		encoding[f.c1|(id[3]<<3)&0x1F]),
+		f.c2),
+		f.c3),
+		f.c4),
+		f.c5),
+		f.c6),
+		f.c7),
+		f.c8),
+		encoding[(id[4]>>5)|f.c9]),
 		encoding[id[4]&0x1F]),
 		encoding[id[5]>>3]),
 		encoding[(id[6]>>6)&0x1F|(id[5]<<2)&0x1F]),
 		encoding[(id[6]>>1)&0x1F]),
-		encoding[(id[7]>>4)&0x1F|(id[6]<<4)&0x1F]),
-		encoding[id[8]>>7|(id[7]<<1)&0x1F]),
-		encoding[(id[8]>>2)&0x1F]),
-		encoding[(id[9]>>5)|(id[8]<<3)&0x1F]),
-		encoding[id[9]&0x1F]),
-		encoding[id[10]>>3]),
-		encoding[(id[11]>>6)&0x1F|(id[10]<<2)&0x1F]),
-		encoding[(id[11]>>1)&0x1F]),
-		encoding[(id[11]<<4)&0x1F])
-	buf.Put(dst[:0])
+		encoding[(id[6]<<4)&0x1F])
 	return *(*string)(unsafe.Pointer(&dst))
 }
