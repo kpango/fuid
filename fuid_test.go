@@ -1,6 +1,8 @@
 package fuid
 
 import (
+	"context"
+	"sync"
 	"testing"
 )
 
