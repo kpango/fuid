@@ -61,6 +61,7 @@ func New() *FUID {
 
 	p1 := byte(pid >> 8)
 	p2 := byte(pid)
+
 	return &FUID{
 		ou: append(append(append(append(append(append(append(make([]byte, 0, 7),
 			encoding[mid[0]&0x1F]),
