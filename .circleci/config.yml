@@ -32,6 +32,7 @@ jobs:
             go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
             go tool cover -html=coverage.out -o coverage.html
             bash <(curl -s https://codecov.io/bash)
+          no_output_timeout: 15m
       - store_artifacts:
           path: ./coverage.html
       - save_cache:
