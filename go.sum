@@ -3,6 +3,8 @@ github.com/google/uuid v1.1.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/kpango/fastime v1.0.0/go.mod h1:Y5XY5bLG5yc7g2XmMUzc22XYV1XaH+KgUOHkDvLp4SA=
 github.com/kpango/fastime v1.0.3 h1:brY3CZK7gJR+FruoH0iorbjRfLWzOv3fLfSoWTYX6kA=
 github.com/kpango/fastime v1.0.3/go.mod h1:Y5XY5bLG5yc7g2XmMUzc22XYV1XaH+KgUOHkDvLp4SA=
+github.com/kpango/fastime v1.0.8 h1:Wif5eocdsIXmMG+8HHfRP/jD6UUl+/OVTJ+sMzvA1+E=
+github.com/kpango/fastime v1.0.8/go.mod h1:Y5XY5bLG5yc7g2XmMUzc22XYV1XaH+KgUOHkDvLp4SA=
 github.com/kpango/glg v1.2.7 h1:aVnv89IIWXSFNOm93SnDQGIKF27Jzz9olieOL2b23Xc=
 github.com/kpango/glg v1.2.7/go.mod h1:sEwy6Va116x0eKdbVsilHPanIrsoE9AR/9vHwdo4ytQ=
 github.com/rs/xid v1.2.1 h1:mhH9Nq+C1fY2l1XIpgxIiUOfNpRBYH1kKcr+qfKgjRc=
