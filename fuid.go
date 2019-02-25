@@ -63,13 +63,13 @@ func New() *FUID {
 	p2 := byte(pid)
 
 	return &FUID{
-		ou: append(append(append(append(append(append(append(make([]byte, 0, 7),
-			encoding[mid[0]&0x1F]),
-			encoding[mid[1]>>3]),
-			encoding[(mid[2]>>6)&0x1F|(mid[1]<<2)&0x1F]),
-			encoding[(mid[2]>>1)&0x1F]),
-			encoding[(p1>>4)&0x1F|(mid[2]<<4)&0x1F]),
-			encoding[p2>>7|(p1<<1)&0x1F]),
+		ou: append(make([]byte, 0, 7),
+			encoding[mid[0]&0x1F],
+			encoding[mid[1]>>3],
+			encoding[(mid[2]>>6)&0x1F|(mid[1]<<2)&0x1F],
+			encoding[(mid[2]>>1)&0x1F],
+			encoding[(p1>>4)&0x1F|(mid[2]<<4)&0x1F],
+			encoding[p2>>7|(p1<<1)&0x1F],
 			encoding[(p2>>2)&0x1F]),
 		c1: mid[0] >> 5,
 		c2: (p2 << 3) & 0x1F,
@@ -95,22 +95,23 @@ func (f *FUID) String() string {
 	id[4] = byte(i >> 16)
 	id[5] = byte(i >> 8)
 	id[6] = byte(i)
-	dst := make([]byte, 0, encodedLen)
-	dst = append(append(append(append(append(append(append(append(append(append(append(append(append(append(
-		dst,
+	return str(append(append(make([]byte, 0, encodedLen),
 		f.ou...),
-		encoding[id[0]>>3]),
-		encoding[(id[1]>>6)&0x1F|(id[0]<<2)&0x1F]),
-		encoding[(id[1]>>1)&0x1F]),
-		encoding[(id[2]>>4)&0x1F|(id[1]<<4)&0x1F]),
-		encoding[id[3]>>7|(id[2]<<1)&0x1F]),
-		encoding[(id[3]>>2)&0x1F]),
-		encoding[f.c1|(id[3]<<3)&0x1F]),
-		encoding[(id[4]>>5)|f.c2]),
-		encoding[id[4]&0x1F]),
-		encoding[id[5]>>3]),
-		encoding[(id[6]>>6)&0x1F|(id[5]<<2)&0x1F]),
-		encoding[(id[6]>>1)&0x1F]),
-		encoding[(id[6]<<4)&0x1F])
-	return *(*string)(unsafe.Pointer(&dst))
+		encoding[id[0]>>3],
+		encoding[(id[1]>>6)&0x1F|(id[0]<<2)&0x1F],
+		encoding[(id[1]>>1)&0x1F],
+		encoding[(id[2]>>4)&0x1F|(id[1]<<4)&0x1F],
+		encoding[id[3]>>7|(id[2]<<1)&0x1F],
+		encoding[(id[3]>>2)&0x1F],
+		encoding[f.c1|(id[3]<<3)&0x1F],
+		encoding[(id[4]>>5)|f.c2],
+		encoding[id[4]&0x1F],
+		encoding[id[5]>>3],
+		encoding[(id[6]>>6)&0x1F|(id[5]<<2)&0x1F],
+		encoding[(id[6]>>1)&0x1F],
+		encoding[(id[6]<<4)&0x1F]))
+}
+
+func str(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
 }
