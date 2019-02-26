@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/md5"
 	"crypto/rand"
-	"encoding/binary"
 	"fmt"
 	"hash/crc32"
 	"io/ioutil"
@@ -63,7 +62,7 @@ func New() *FUID {
 	p2 := byte(pid)
 
 	return &FUID{
-		ou: [...]byte{
+		ou: [rawLen]byte{
 			encoding[mid[0]&0x1F],
 			encoding[mid[1]>>3],
 			encoding[(mid[2]>>6)&0x1F|(mid[1]<<2)&0x1F],
@@ -90,18 +89,23 @@ func String() string {
 }
 
 func (f *FUID) String() string {
-	var id [rawLen]byte
-	binary.BigEndian.PutUint32(id[:], f.t.UnixUNow())
+	n := f.t.UnixUNow()
 	i := atomic.AddUint32(&f.oic, 1)
-	id[4] = byte(i >> 16)
-	id[5] = byte(i >> 8)
-	id[6] = byte(i)
+	id := [rawLen]byte{
+		byte(n >> 24),
+		byte(n >> 16),
+		byte(n >> 8),
+		byte(n),
+		byte(i >> 16),
+		byte(i >> 8),
+		byte(i),
+	}
 	return *(*string)(unsafe.Pointer(&struct {
 		array unsafe.Pointer
 		len   int
 		cap   int
 	}{
-		array: unsafe.Pointer(&[...]byte{
+		array: unsafe.Pointer(&[encodedLen]byte{
 			f.ou[0],
 			f.ou[1],
 			f.ou[2],
