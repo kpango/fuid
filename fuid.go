@@ -20,7 +20,7 @@ type FUID struct {
 	c1  byte
 	c2  byte
 	oic uint32
-	t   *fastime.Fastime
+	t   fastime.Fastime
 }
 
 const (
